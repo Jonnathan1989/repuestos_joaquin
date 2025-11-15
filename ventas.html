@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ventas - Joaquín</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #121212; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .logo-img { width: 80px; height: 80px; object-fit: contain; border-radius: 12px; border: 2px solid #dc3545; }
+        .table-dark { --bs-table-bg: #1a1a1a; --bs-table-border-color: #333; }
+        .badge { font-size: 0.9em; }
+        .text-success { color: #28a745 !important; }
+        .text-info { color: #17a2b8 !important; }
+        .alert { background: #2c2c2c; border: 1px solid #dc3545; color: #fff; }
+        .btn { transition: all 0.2s; }
+        .btn:hover { transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- CABECERA -->
+        <div class="d-flex align-items-center justify-content-center mb-4">
+            <img src="img/logo.jpg" alt="Logo Joaquín" class="logo-img me-3">
+            <div>
+                <h1 class="mb-0 text-danger fw-bold display-5">JOAQUÍN</h1>
+                <p class="mb-0 text-white fs-6">Historial de Ventas</p>
+            </div>
+        </div>
+
+        <!-- TABLA DE VENTAS -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Descripción</th>
+                        <th>Cliente</th>
+                        <th>Cant.</th>
+                        <th>Precio Unit.</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-ventas"></tbody>
+                <tfoot>
+                    <tr class="table-success">
+                        <th colspan="6" class="text-end">TOTAL VENDIDO:</th>
+                        <th id="total-vendido" class="text-start fw-bold">$0</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="text-center mt-4">
+            <button onclick="window.print()" class="btn btn-outline-light me-2">Imprimir</button>
+            <button onclick="window.close()" class="btn btn-outline-secondary me-2">Cerrar</button>
+            <button id="btn-borrar-historial" class="btn btn-warning me-2">Borrar Historial</button>
+            <button id="btn-exportar-ventas" class="btn btn-success">Exportar a Excel</button>
+        </div>
+
+        <!-- CONFIRMACIÓN DE BORRADO -->
+        <div class="alert alert-danger d-none mt-4" id="confirmacion-borrar" role="alert">
+            <h5 class="alert-heading">Atención: Confirmación de borrado</h5>
+            <p>Estás a punto de <strong>ELIMINAR PERMANENTEMENTE</strong> todo el historial de ventas.</p>
+            <p class="mb-2">
+                <strong>Ventas registradas:</strong> <span id="cantidad-ventas">0</span><br>
+                <strong>Total vendido:</strong> <span id="total-ventas">$0</span>
+            </p>
+            <hr>
+            <div class="d-flex gap-2 justify-content-end">
+                <button id="cancelar-borrar" class="btn btn-secondary btn-sm">Cancelar</button>
+                <button id="confirmar-borrar" class="btn btn-danger btn-sm">Sí, BORRAR TODO</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ventas = [];
+
+        // === CARGAR VENTAS CON CLIENTE (CORREGIDO) ===
+        async function cargarVentas() {
+            try {
+                const res = await fetch('api.php?action=ventas');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                ventas = await res.json();
+
+                const tbody = document.getElementById('tabla-ventas');
+                tbody.innerHTML = '';
+                let totalVendido = 0;
+
+                if (ventas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay ventas registradas.</td></tr>';
+                } else {
+                    ventas.forEach(v => {
+                        totalVendido += parseFloat(v.total);
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="text-nowrap">${v.fecha_venta}</td>
+                            <td><strong>${v.nombre_producto}</strong></td>
+                            <td>${v.descripcion || '-'}</td>
+                            <td class="text-info">${v.cliente || 'Sin cliente'}</td>
+                            <td><span class="badge bg-primary">${v.cantidad}</span></td>
+                            <td>$${parseFloat(v.precio_unitario).toLocaleString('es-CO')}</td>
+                            <td class="text-success fw-bold">$${parseFloat(v.total).toLocaleString('es-CO')}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                document.getElementById('total-vendido').textContent = `$${totalVendido.toLocaleString('es-CO')}`;
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('tabla-ventas').innerHTML = 
+                    '<tr><td colspan="7" class="text-center text-danger">Error de conexión con el servidor.</td></tr>';
+            }
+        }
+
+        // === BORRAR HISTORIAL CON CONFIRMACIÓN ===
+        const btnBorrar = document.getElementById('btn-borrar-historial');
+        const confirmacion = document.getElementById('confirmacion-borrar');
+        const cantidadVentas = document.getElementById('cantidad-ventas');
+        const totalVentas = document.getElementById('total-ventas');
+        const cancelarBtn = document.getElementById('cancelar-borrar');
+        const confirmarBtn = document.getElementById('confirmar-borrar');
+
+        btnBorrar?.addEventListener('click', () => {
+            if (ventas.length === 0) {
+                alert('No hay ventas para borrar.');
+                return;
+            }
+
+            let total = 0;
+            ventas.forEach(v => total += parseFloat(v.total));
+            cantidadVentas.textContent = ventas.length;
+            totalVentas.textContent = `$${total.toLocaleString('es-CO')}`;
+
+            confirmacion.classList.remove('d-none');
+            btnBorrar.disabled = true;
+        });
+
+        cancelarBtn?.addEventListener('click', () => {
+            confirmacion.classList.add('d-none');
+            btnBorrar.disabled = false;
+        });
+
+        confirmarBtn?.addEventListener('click', async () => {
+            try {
+                const res = await fetch('api.php?action=borrar_ventas', { method: 'POST' });
+                if (!res.ok) throw new Error();
+                alert('Historial borrado correctamente.');
+                location.reload();
+            } catch {
+                alert('Error al borrar el historial.');
+                confirmacion.classList.add('d-none');
+                btnBorrar.disabled = false;
+            }
+        });
+
+        // === EXPORTAR A EXCEL ===
+        document.getElementById('btn-exportar-ventas')?.addEventListener('click', () => {
+            if (ventas.length === 0) {
+                alert('No hay ventas para exportar.');
+                return;
+            }
+            window.location.href = 'api.php?action=exportar_ventas';
+        });
+
+        // === INICIAR ===
+        cargarVentas();
+    </script>
+</body>
+</html>

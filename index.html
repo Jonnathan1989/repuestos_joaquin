@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Repuestos Motos - Joaquín</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ESTILO TEMPORAL SI NO TIENES style.css */
+        body { background: #121212; color: #fff; }
+        .logo-img { width: 80px; height: 80px; object-fit: contain; }
+        .table-dark { --bs-table-bg: #1a1a1a; }
+        .badge { font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- CABECERA -->
+        <div class="d-flex align-items-center justify-content-center mb-4 flex-wrap text-center text-md-start">
+            <img src="img/logo.jpg" alt="Logo Joaquín" class="logo-img me-3">
+            <div>
+                <h1 class="mb-0 text-danger fw-bold display-5">JOAQUÍN</h1>
+                <p class="mb-0 text-white fs-6">Repuestos & Accesorios para Motocicletas</p>
+            </div>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form id="form-repuesto" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" id="nombre" class="form-control" placeholder="Nombre" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="descripcion" class="form-control" placeholder="Descripción" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="precio" class="form-control" placeholder="Precio" min="0" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="stock" class="form-control" placeholder="Stock" min="0" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Agregar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- BÚSQUEDA + BOTONES -->
+        <div class="mb-3">
+            <input type="text" id="buscar" class="form-control" placeholder="Buscar repuesto...">
+        </div>
+        <div class="mb-3">
+            <button id="exportar" class="btn btn-success me-2">Exportar a Excel</button>
+            <button id="btn-ver-ventas" class="btn btn-success">Ver Ventas</button>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-repuestos"></tbody>
+                <tfoot>
+                    <tr class="table-success">
+                        <th colspan="2"></th>
+                        <th class="text-end pe-3">VALOR EN INVENTARIO:</th>
+                        <th id="total-inventario" class="text-start fw-bold">$0</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Editar Repuesto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="edit-nombre" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" id="edit-descripcion" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Precio</label>
+                        <input type="number" id="edit-precio" class="form-control" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stock</label>
+                        <input type="number" id="edit-stock" class="form-control" min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardar-edicion">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VENDER -->
+    <div class="modal fade" id="modalVender" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Vender Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalVenderNombre" class="mb-2 fw-bold"></p>
+                    <p class="mb-3">Stock disponible: <span id="modalVenderStock" class="text-success fw-bold"></span></p>
+                    <label for="cantidadVender" class="form-label">Cantidad:</label>
+                    <input type="number" id="cantidadVender" class="form-control" min="1" value="1">
+                    <!-- INFO CLIENTE -->
+                    <div class="mb-2 mt-3">
+                        <small class="text-info" id="infoClienteVenta">Sin cliente</small>
+                        <button id="cambiarCliente" class="btn btn-link btn-sm text-decoration-underline p-0 ms-2">Cambiar</button>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="confirmarVenta">Vender</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CLIENTE (DENTRO DEL BODY) -->
+    <div class="modal fade" id="modalCliente" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content bg-dark text-white border-danger">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Seleccionar Cliente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-2">
+                        <input type="text" id="buscarCliente" class="form-control bg-secondary text-white border-0" placeholder="Buscar cliente...">
+                        <button class="btn btn-outline-danger btn-sm" id="nuevoClienteBtn">+ Nuevo</button>
+                    </div>
+                    <select id="listaClientes" class="form-select bg-secondary text-white" size="5" style="display:none;"></select>
+                    <div id="infoCliente" class="mt-2 small text-info"></div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="confirmarCliente" class="btn btn-success btn-sm">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SONIDO -->
+    <audio id="sonido-venta" src="img/ding.mp3" preload="auto"></audio>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

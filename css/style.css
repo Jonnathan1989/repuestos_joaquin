@@ -1,0 +1,194 @@
+/* style.css - FONDO CON IMAGEN + DISEÑO PROFESIONAL */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* FONDO DE IMAGEN */
+body {
+    background: url('../img/moto1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* CAPA OSCURA PARA LEER TEXTO */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7); /* ← AQUÍ ESTABA EL ERROR: rgb(0,0,0.6) */
+    z-index: -1;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    max-width: 95%;
+}
+
+/* TÍTULO */
+h1 {
+    color: #ff4444;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.8);
+    font-weight: bold;
+    font-size: 2.2rem;
+}
+
+/* INPUTS Y BOTONES */
+.form-control, .btn {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.form-control:focus {
+    border-color: #ff4444;
+    box-shadow: 0 0 0 0.25rem rgba(255, 68, 68, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #ff4444, #cc0000);
+    border: none;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    border: none;
+}
+
+/* TABLA */
+.table {
+    background: rgba(255, 255, 255, 0.97);
+    color: #212529;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    margin-bottom: 0;
+}
+
+.table th {
+    background: #343a40;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 68, 68, 0.15);
+    transform: scale(1.01);
+    transition: 0.2s;
+}
+
+/* BADGE STOCK */
+.badge {
+    font-weight: bold;
+    padding: 0.5em 0.9em;
+    border-radius: 50px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+    .btn {
+        font-size: 0.9rem;
+    }
+}
+
+/* === TOTAL EN PIE DE TABLA === */
+tfoot .table-dark th {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+#total-precio {
+    color: #ff4444 !important;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Ocultar audio (no se ve, solo se escucha) */
+#sonido-venta {
+    display: none;
+}
+#total-inventario {
+    color: #28a745 !important;
+    font-weight: bold;
+    font-size: 1.15rem;
+}
+
+/* === LOGO Y TÍTULO === */
+.logo-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 15px;
+    border: 3px solid #ff4444;
+    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+    transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(255, 68, 68, 0.6);
+}
+
+@media (max-width: 576px) {
+    .logo-img {
+        width: 55px;
+        height: 55px;
+    }
+    .display-5 {
+        font-size: 1.8rem;
+    }
+}
+
+/* === HISTORIAL DE VENTAS === */
+#tabla-ventas .badge {
+    font-size: 0.8rem;
+}
+.table-success th, .table-success td {
+    font-weight: bold;
+}
+
+/* === MODAL VENDER === */
+#modalVender .modal-content {
+    border: 2px solid #28a745;
+    border-radius: 15px;
+}
+
+#modalVender .btn-success {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    border: none;
+    font-weight: bold;
+}
+
+#cantidadVender {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
