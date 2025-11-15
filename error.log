@@ -178,3 +178,18 @@
 [15-Nov-2025 05:19:22 Europe/Berlin] guardar_venta: Stock restado correctamente para ID 7
 [15-Nov-2025 05:19:22 Europe/Berlin] guardar_venta: VENTA GUARDADA - ID: 4, Descripción: 'Honda CB125F'
 [15-Nov-2025 05:19:43 Europe/Berlin] borrar_ventas: Historial borrado
+[15-Nov-2025 05:31:15 Europe/Berlin] guardar_venta: INICIO - Método: POST
+[15-Nov-2025 05:31:15 Europe/Berlin] guardar_venta: RAW INPUT: {"repuesto_id":"8","nombre_producto":"Bombilla","descripcion":"Varios","cantidad":2,"precio_unitario":20000,"cliente_id":null}
+[15-Nov-2025 05:31:15 Europe/Berlin] guardar_venta: INPUT parseado: Array
+(
+    [repuesto_id] => 8
+    [nombre_producto] => Bombilla
+    [descripcion] => Varios
+    [cantidad] => 2
+    [precio_unitario] => 20000
+    [cliente_id] => 
+)
+
+[15-Nov-2025 05:31:15 Europe/Berlin] guardar_venta: Stock restado correctamente para ID 8
+[15-Nov-2025 05:31:15 Europe/Berlin] guardar_venta: VENTA GUARDADA - ID: 1, Descripción: 'Varios'
+[15-Nov-2025 05:31:28 Europe/Berlin] borrar_ventas: Historial borrado

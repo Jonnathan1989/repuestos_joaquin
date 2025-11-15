@@ -7,8 +7,9 @@ html, body {
 
 /* FONDO DE IMAGEN */
 body {
-    background: url('../img/moto1.jpg') no-repeat center center fixed;
+    background: url(../img/moto1.jpg?v=2) no-repeat center center fixed;
     background-size: cover;
+    background-color: #000; /* Fallback mientras carga */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #fff;
     min-height: 100vh;
@@ -19,9 +20,13 @@ body {
 body::before {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.7); /* ← AQUÍ ESTABA EL ERROR: rgb(0,0,0.6) */
-    z-index: -1;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* CONTENEDOR PRINCIPAL */
@@ -34,6 +39,8 @@ body::before {
     margin-top: 2rem;
     margin-bottom: 2rem;
     max-width: 95%;
+    position: relative;
+    z-index: 1;
 }
 
 /* TÍTULO */
@@ -135,6 +142,7 @@ tfoot .table-dark th {
 #sonido-venta {
     display: none;
 }
+
 #total-inventario {
     color: #28a745 !important;
     font-weight: bold;
@@ -171,6 +179,7 @@ tfoot .table-dark th {
 #tabla-ventas .badge {
     font-size: 0.8rem;
 }
+
 .table-success th, .table-success td {
     font-weight: bold;
 }

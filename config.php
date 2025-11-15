@@ -1,9 +1,13 @@
 <?php
-// config.php - CONEXIÓN A MySQL
+// config.php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $host = 'localhost';
 $db   = 'joaquin_repuestos';
 $user = 'root';
-$pass = '';  // ← ¡VACÍA! (porque nunca pusiste contraseña)
+$pass = '';  // ← ¡VACÍA!
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
