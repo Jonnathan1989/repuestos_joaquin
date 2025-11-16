@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Joaquín</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- CABECERA -->
+        <div class="d-flex align-items-center justify-content-center mb-4 flex-wrap text-center">
+            <img src="img/logo.jpg" alt="Logo Joaquín" class="logo-img me-3">
+            <div>
+                <h1 class="mb-0 text-danger fw-bold display-5">JOAQUÍN</h1>
+                <p class="mb-0 text-white fs-6">Gestión de Clientes</p>
+            </div>
+        </div>
+
+        <!-- BOTONES DE NAVEGACIÓN -->
+        <div class="mb-4">
+            <a href="index.html" class="btn btn-outline-light me-2">← Inventario</a>
+            <a href="ventas.html" class="btn btn-outline-light">📊 Ventas</a>
+        </div>
+
+        <!-- FORMULARIO AGREGAR CLIENTE -->
+        <div class="card bg-dark text-white mb-4">
+            <div class="card-header bg-danger">
+                <h5 class="mb-0">➕ Agregar Nuevo Cliente</h5>
+            </div>
+            <div class="card-body">
+                <form id="form-cliente">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" id="cliente-nombre" class="form-control" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="tel" id="cliente-telefono" class="form-control" placeholder="Teléfono">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="email" id="cliente-email" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-success w-100">Agregar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- BÚSQUEDA -->
+        <div class="mb-3">
+            <input type="text" id="buscar-cliente" class="form-control" placeholder="🔍 Buscar cliente por nombre, teléfono o email...">
+        </div>
+
+        <!-- BOTÓN EXPORTAR -->
+        <div class="mb-3">
+            <button id="exportar-clientes" class="btn btn-success">📥 Exportar Clientes a Excel</button>
+        </div>
+
+        <!-- TABLA DE CLIENTES -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>TELÉFONO</th>
+                        <th>EMAIL</th>
+                        <th>COMPRAS</th>
+                        <th>TOTAL GASTADO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-clientes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR CLIENTE -->
+    <div class="modal fade" id="modalEditarCliente" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title">✏️ Editar Cliente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-cliente-id">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="edit-cliente-nombre" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" id="edit-cliente-telefono" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="edit-cliente-email" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardar-edicion-cliente">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIAL DE COMPRAS -->
+    <div class="modal fade" id="modalHistorialCliente" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title">📋 Historial de Compras</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="nombre-cliente-historial" class="text-info mb-3"></h6>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historial-cliente"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="clientes.js"></script>
+</body>
+</html>

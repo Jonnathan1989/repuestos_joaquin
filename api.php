@@ -141,7 +141,7 @@ switch ($action) {
         $output = fopen('php://output', 'w');
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=ventas_joaquin.csv');
-        echo "\xEF\xBB\xBF"; // BOM para Excel
+        echo "\xEF\xBB\xBF";
         if (!empty($data)) {
             fputcsv($output, array_keys($data[0]));
             foreach ($data as $row) fputcsv($output, $row);
@@ -158,6 +158,97 @@ switch ($action) {
         echo "\xEF\xBB\xBF";
         fputcsv($output, ['Nombre', 'Descripción', 'Precio', 'Stock']);
         foreach ($data as $row) fputcsv($output, $row);
+        exit;
+
+    // === LISTAR TODOS LOS CLIENTES CON ESTADÍSTICAS ===
+    case 'listar_clientes':
+        $stmt = $pdo->query("
+            SELECT 
+                c.id,
+                c.nombre,
+                c.telefono,
+                c.email,
+                COUNT(v.id) as total_compras,
+                COALESCE(SUM(v.cantidad * v.precio_unitario), 0) as total_gastado
+            FROM clientes c
+            LEFT JOIN ventas v ON c.id = v.cliente_id
+            GROUP BY c.id
+            ORDER BY c.nombre
+        ");
+        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        break;
+
+    // === OBTENER UN CLIENTE ===
+    case 'obtener_cliente':
+        $id = $_GET['id'] ?? 0;
+        $stmt = $pdo->prepare("SELECT * FROM clientes WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        break;
+
+    // === EDITAR CLIENTE ===
+    case 'editar_cliente':
+        $data = json_decode(file_get_contents('php://input'), true);
+        $stmt = $pdo->prepare("UPDATE clientes SET nombre=?, telefono=?, email=? WHERE id=?");
+        $result = $stmt->execute([
+            $data['nombre'],
+            $data['telefono'] ?? '',
+            $data['email'] ?? '',
+            $data['id']
+        ]);
+        echo json_encode(['success' => $result]);
+        break;
+
+    // === ELIMINAR CLIENTE ===
+    case 'eliminar_cliente':
+        $id = $_GET['id'] ?? 0;
+        $stmt = $pdo->prepare("DELETE FROM clientes WHERE id = ?");
+        $result = $stmt->execute([$id]);
+        echo json_encode(['success' => $result]);
+        break;
+
+    // === HISTORIAL DE COMPRAS DE UN CLIENTE ===
+    case 'historial_cliente':
+        $id = $_GET['id'] ?? 0;
+        $stmt = $pdo->prepare("
+            SELECT 
+                fecha_venta,
+                nombre_producto,
+                cantidad,
+                (cantidad * precio_unitario) as total
+            FROM ventas
+            WHERE cliente_id = ?
+            ORDER BY fecha_venta DESC
+        ");
+        $stmt->execute([$id]);
+        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        break;
+
+    // === EXPORTAR CLIENTES A EXCEL ===
+    case 'exportar_clientes':
+        $stmt = $pdo->query("
+            SELECT 
+                c.nombre AS Nombre,
+                c.telefono AS Telefono,
+                c.email AS Email,
+                COUNT(v.id) as 'Total Compras',
+                COALESCE(SUM(v.cantidad * v.precio_unitario), 0) as 'Total Gastado'
+            FROM clientes c
+            LEFT JOIN ventas v ON c.id = v.cliente_id
+            GROUP BY c.id
+            ORDER BY c.nombre
+        ");
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $output = fopen('php://output', 'w');
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=clientes_joaquin.csv');
+        echo "\xEF\xBB\xBF";
+        
+        if (!empty($data)) {
+            fputcsv($output, array_keys($data[0]));
+            foreach ($data as $row) fputcsv($output, $row);
+        }
         exit;
 
     default:
